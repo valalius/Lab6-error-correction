@@ -1,0 +1,46 @@
+#include <string>
+#include <bitset>
+
+// Функція кодування
+std::string encode(const std::string &text) {
+    std::string result = "";
+    
+    for (char c : text) {
+        // Перетворення символу на 8 біт
+        std::string binary = std::bitset<8>(c).to_string();
+        
+        // Потроєння кожного біта
+        for (char bit : binary) {
+            result += bit;
+            result += bit;
+            result += bit;
+        }
+    }
+    
+    return result;
+}
+
+// Функція декодування
+std::string decode(const std::string &bits) {
+    std::string cleanBits = "";
+    
+    // Голосування по 3 біти
+    for (size_t i = 0; i < bits.length(); i += 3) {
+        int countOnes = 0;
+        if (bits[i] == '1') countOnes++;
+        if (bits[i + 1] == '1') countOnes++;
+        if (bits[i + 2] == '1') countOnes++;
+        
+        cleanBits += (countOnes >= 2) ? '1' : '0';
+    }
+    
+    std::string decodedText = "";
+    
+    // Перетворення назад у символи по 8 виправлених бітів
+    for (size_t i = 0; i < cleanBits.length(); i += 8) {
+        std::bitset<8> byte(cleanBits.substr(i, 8));
+        decodedText += static_cast<char>(byte.to_ulong());
+    }
+    
+    return decodedText;
+}
